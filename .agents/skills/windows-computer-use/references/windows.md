@@ -1,12 +1,12 @@
-# 在 Windows 上使用
+# Using the Skill on Windows
 
-以下命令用于已登录并解锁的 Windows 10（1703 或更新版本）或 Windows 11 桌面。需要 Windows 原生 Python 3.10+。在仓库根目录打开 PowerShell，首次运行：
+These commands target a signed-in, unlocked Windows 10 (version 1703 or later) or Windows 11 desktop. A native Windows installation of Python 3.10+ is required. Open PowerShell at the repository root and run this command for first-time setup:
 
 ```powershell
 .\.agents\skills\windows-computer-use\setup.cmd
 ```
 
-安装程序在当前用户目录创建虚拟环境，并以 `doctor` 检查依赖和桌面会话。运行后，PowerShell 中可用以下两个变量调用助手。如果技能装在别处，将 `$desktop` 指向该技能的 `scripts\desktop.py`。
+The setup script creates a virtual environment under the current user's directory and runs `doctor` to check dependencies and the desktop session. After setup, use these two PowerShell variables to invoke the helper. If the skill is installed elsewhere, point `$desktop` to that skill's `scripts\desktop.py`.
 
 ```powershell
 $python = Join-Path $env:LOCALAPPDATA 'kobe-agent-kit\windows-computer-use\venv\Scripts\python.exe'
@@ -14,34 +14,34 @@ $desktop = (Resolve-Path '.agents/skills/windows-computer-use/scripts/desktop.py
 & $python $desktop doctor
 ```
 
-命令成功时标准输出为 JSON，运行错误写入标准错误并返回非零退出码。PowerShell 5.1 和 7 均可用 `ConvertFrom-Json` 处理结果。
+Successful commands write JSON to standard output. Runtime errors go to standard error and return a nonzero exit code. Both PowerShell 5.1 and 7 can process the results with `ConvertFrom-Json`.
 
-## 从窗口到控件
+## From Windows to Controls
 
-例如，用户要在“另存为”窗口填写文件名。先列窗口，从结果中选中正确的对话框。若需启动应用，可使用已确认的应用名，例如 `Start-Process notepad.exe`，再观察新窗口。
+For example, the user wants to fill in a filename in a Save As dialog. List the windows first and select the correct dialog from the results. If the application needs to be started, use its confirmed name, such as `Start-Process notepad.exe`, then observe the new window.
 
 ```powershell
 (& $python $desktop windows | ConvertFrom-Json).windows | Format-Table
-# 将数字替换为刚观察到的对话框 HWND 和 PID
+# Replace these numbers with the dialog HWND and PID just observed.
 $target = @('--hwnd', '123456', '--pid', '7890')
 & $python $desktop focus @target
 $view = & $python $desktop inspect @target | ConvertFrom-Json
 $view.controls | Format-List id, type, name, automation_id, enabled, visible, focused, depth
 ```
 
-从输出中识别文件名编辑框，把该行的 `id` 放入 `$field`。不同系统语言、应用、甚至两次打开同一对话框时的值都可能不同。若 `truncated` 为真，可以调高 `--limit`（最多 2000）。没有可用 ID、控件重建或操作模式不受支持时，重新观察，必要时转用截图。
+Identify the filename edit control in the output and assign its `id` to `$field`. Values may differ across system languages, applications, and even consecutive openings of the same dialog. If `truncated` is true, increase `--limit` up to 2000. If no usable ID is available, a control has been recreated, or an automation pattern is unsupported, observe again and switch to screenshots if needed.
 
 ```powershell
-$field = '<刚观察到的编辑框 id>'
-& $python $desktop set-text @target --control $field --text '项目纪要.txt'
+$field = '<edit control id just observed>'
+& $python $desktop set-text @target --control $field --text 'project-notes.txt'
 & $python $desktop read-text @target --control $field
 ```
 
-核对回读值是否完全等于目标文件名。用户仅要求填写时，保留对话框打开。用户要求保存时，从最新观察中取得保存按钮 ID，执行 `invoke @target --control $button`，再检查覆盖确认框或目标文件。以下简写的命令前均需加上 `& $python $desktop`。
+Verify that the value read back exactly matches the intended filename. Leave the dialog open if the user only asked to fill it in. If the user asked to save, get the Save button's ID from the latest observation, run `invoke @target --control $button`, then check for an overwrite confirmation or the target file. Prefix each abbreviated command below with `& $python $desktop`.
 
-如果编辑框不支持直接设置值，用 `focus @target --control $field` 把键盘焦点移入已识别的字段。自绘界面可点击编辑区，再确认光标。**替换**预填文件名时，在确认该字段获焦后执行 `press @target --keys 'Ctrl+A'`，接着执行 `type-text @target --text '项目纪要.txt'`，最后回读或截图核对完整字段。**追加**时则先确认插入位置，直接使用 `type-text`。该命令输入单行字面文本，支持中文；需要换行的多行编辑区可用 `press @target --keys Enter`。
+If the edit control does not support setting its value directly, use `focus @target --control $field` to move keyboard focus to the identified field. In a custom-drawn interface, click the editing area and confirm the cursor position. To **replace** a prefilled filename, confirm the field has focus, run `press @target --keys 'Ctrl+A'`, then `type-text @target --text 'project-notes.txt'`, and finally read back or capture the complete field to verify it. To **append**, first confirm the insertion point, then use `type-text` directly. This command enters a single line of literal text and supports Chinese input; use `press @target --keys Enter` for line breaks in multiline editors.
 
-## 在截图中定位
+## Locating Targets in Screenshots
 
 ```powershell
 $png = Join-Path $env:TEMP ("window-{0}.png" -f [guid]::NewGuid())
@@ -49,12 +49,12 @@ $shot = & $python $desktop screenshot @target --out $png | ConvertFrom-Json
 $shot | Format-List path, width, height, frame
 ```
 
-用图像查看工具打开返回的 `path`。如果预览缩小了，按 `width` 和 `height` 把选中位置换算为原图像素。将实际读图得到的数值放入 `$x` 和 `$y`，执行以下**一项**操作后重新观察。
+Open the returned `path` with an image viewer. If the preview is scaled down, use `width` and `height` to convert the selected position to pixels in the original image. Assign the coordinates actually observed in the image to `$x` and `$y`, perform **one** of the following actions, then observe again.
 
 ```powershell
 & $python $desktop click @target --frame $shot.frame --x $x --y $y
-# 或向下滚动三格
+# Or scroll down three notches.
 & $python $desktop scroll @target --frame $shot.frame --x $x --y $y --steps -3
 ```
 
-`click` 可用 `--button right` 打开上下文菜单。保留负的多屏幕桌面坐标给工具处理，传给 `click` 和 `scroll` 的 x/y 始终是窗口图像内的坐标。若有其他窗口遮挡，先移开遮挡或选择对应弹窗。截图会留在指定路径，用完可删除本次创建的临时 PNG。
+Use `click` with `--button right` to open a context menu. Let the tool handle negative desktop coordinates across multiple monitors; the x/y values passed to `click` and `scroll` are always coordinates within the window image. If another window obscures the target, move the obstruction or select the relevant dialog first. Screenshots remain at the specified paths; temporary PNGs created during this task may be deleted after use.

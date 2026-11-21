@@ -1,66 +1,66 @@
-<!-- 仅在用户和项目均无适用模板时使用。按规模合并或删减章节，保留解决问题所需的信息；填写后删除本注释及所有占位提示。视图放在对应章节，不另建重复的“所有图表”章节。 -->
-# [主题]设计
+<!-- Use only when neither the user nor the project provides an applicable template. Merge or remove sections to fit the scope while retaining the information needed to solve the problem. Remove this comment and all placeholder guidance after completing the document. Place diagrams in the relevant sections instead of adding a duplicate "All diagrams" section. Write generated headings, prose, tables, and diagram labels in the user's output language selected by SKILL.md. Preserve project identifiers, referenced paths, and the format of any user-specified template. The English examples do not require English output. -->
+# [Topic] Design
 
-状态：[草案／待评审／已确认，仅有确认依据时使用已确认]
+Status: [Draft / Ready for review / Confirmed; use Confirmed only when supported by evidence of confirmation]
 
-依据：[需求来源；代码版本或工作区状态，未知时如实说明]
+Basis: [Requirement sources; code revision or workspace state; state honestly when unknown]
 
-## 1. 目标与边界
+## 1. Goals and Scope
 
-[用一段话说明业务问题、目标和推荐方案。]
+[Describe the business problem, goal, and recommended approach in one paragraph.]
 
-- 本次范围：[涉及的角色、场景、能力]
-- 不在范围：[容易被误认为本次要做的事项；无则删去]
-- 关键约束：[已确认的业务规则、兼容要求或资源限制；注明来源]
+- In scope: [Roles, scenarios, and capabilities involved]
+- Out of scope: [Items that could be mistaken for part of this work; remove if none]
+- Key constraints: [Confirmed business rules, compatibility requirements, or resource limits; cite their sources]
 
-## 2. 现状与变化
+## 2. Current State and Changes
 
-[只描述与本次设计相关的现状、缺口和存量设计冲突，关联实际路径与符号。必要时附现状边界图。]
+[Describe only the current state, gaps, and conflicts with existing designs relevant to this work. Reference actual paths and symbols. Include a diagram of the current boundaries when needed.]
 
-| 关注点 | 当前实现与依据 | 拟议变化及影响 |
+| Concern | Current implementation and evidence | Proposed change and impact |
 | --- | --- | --- |
-| [能力／模块] | [行为；路径及符号] | [复用／调整／新增；受影响方] |
+| [Capability / Module] | [Behavior; paths and symbols] | [Reuse / Modify / Add; affected parties] |
 
-## 3. 方案设计
+## 3. Design
 
-### 3.1 职责与关键决策
+### 3.1 Responsibilities and Key Decisions
 
-[说明模块职责、交互边界、推荐方案及理由；存在实质取舍时说明代价和放弃的替代方案。新增实体或组件标为拟议。]
+[Explain module responsibilities, interaction boundaries, the recommended approach, and its rationale. Describe costs and rejected alternatives when there are meaningful tradeoffs. Mark new entities or components as proposed.]
 
-[按需放架构图或类图，仅展现影响本次决策的关系。]
+[Include an architecture or class diagram when needed, showing only relationships that affect this decision.]
 
-### 3.2 业务场景与行为
+### 3.2 Business Scenarios and Behavior
 
-[按场景交代参与者、前置条件、规则和结果。跨角色目标用用例图，调用协作用时序图，分支规则用流程图，有生命周期约束时用状态图；选择能够减少文字的视图。]
+[Describe actors, preconditions, rules, and outcomes for each scenario. Use use case diagrams for goals spanning roles, sequence diagrams for collaboration through calls, flowcharts for branching rules, and state diagrams for lifecycle constraints. Choose diagrams that reduce the amount of prose needed.]
 
-[补充图中无法充分表达的关键异常、边界及处置，不逐步重述图。]
+[Add key failure cases, boundaries, and handling that the diagrams cannot fully express; do not restate them step by step.]
 
-## 4. 接口与数据
+## 4. Interfaces and Data
 
-[仅保留发生变化或限制本方案的契约。无接口或数据变化时可合并到上一节。]
+[Include only contracts that change or constrain this design. Merge this section into the previous one if no interfaces or data change.]
 
-| 契约／模型 | 拟议变化 | 约束与失败行为 | 兼容影响 |
+| Contract / Model | Proposed change | Constraints and failure behavior | Compatibility impact |
 | --- | --- | --- | --- |
-| [接口、事件、表或实体] | [关键输入输出、字段或状态] | [校验、唯一性、错误语义等] | [调用方、旧数据影响] |
+| [Interface, event, table, or entity] | [Key inputs and outputs, fields, or states] | [Validation, uniqueness, error semantics, etc.] | [Impact on callers and existing data] |
 
-[按需给出小型结构示例或 ER 图；说明相关事务、一致性、幂等与并发边界，不复制完整字段清单。]
+[Provide a small structural example or ER diagram when needed. Explain relevant transaction, consistency, idempotency, and concurrency boundaries without copying complete field lists.]
 
-## 5. 质量与交付
+## 5. Quality and Delivery
 
-[仅说明与方案有关的性能、安全、可观测性或可用性要求及实现机制。指标有依据则注明来源；无依据则列为目标提议或待测，不填经验数字。]
+[Describe only the performance, security, observability, or availability requirements and implementation mechanisms relevant to this design. Cite sources for supported metrics; otherwise mark them as proposed targets or pending measurement instead of supplying rule-of-thumb numbers.]
 
-[有发布影响时说明依赖、迁移、兼容、发布顺序和回退方式；不可逆数据变化应明确恢复限制。纯现状文档无此内容时删去。]
+[When the design affects a release, explain dependencies, migration, compatibility, release order, and rollback. State recovery limitations for irreversible data changes. Remove this guidance from a current-state document when it does not apply.]
 
-## 6. 验收与风险
+## 6. Acceptance and Risks
 
-| 需求／场景 | 设计落点 | 验收方式与预期结果 |
+| Requirement / Scenario | Addressed in | Acceptance method and expected outcome |
 | --- | --- | --- |
-| [业务目标或关键异常] | [章节、模块或契约] | [可观察的结果；不要写成测试已通过] |
+| [Business goal or key failure case] | [Section, module, or contract] | [Observable outcome; do not present it as a passed test] |
 
-| 风险／待确认项 | 影响 | 处置／确认方式 |
+| Risk / Open question | Impact | Mitigation / Confirmation method |
 | --- | --- | --- |
-| [具体的不确定性或风险] | [影响范围及被阻塞决策] | [建议措施或需要确认的事实] |
+| [Specific uncertainty or risk] | [Affected scope and blocked decisions] | [Recommended action or fact requiring confirmation] |
 
-## 7. 依据
+## 7. References
 
-[列出正文尚未就近引用的关键需求、存量设计、代码与测试，注明各自支撑的结论；已经就近引用且无需集中列出时删除本节。]
+[List key requirements, existing designs, code, and tests not yet cited near the relevant text, identifying the conclusion each supports. Remove this section if references are already cited nearby and do not need a consolidated list.]

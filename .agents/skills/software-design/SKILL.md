@@ -1,63 +1,65 @@
 ---
 name: software-design
-description: 根据业务诉求、项目中的存量设计与代码，按模板编写、补全或更新软件设计文档。适用于概要设计、详细设计、技术方案和变更设计，需要简洁文字、可追溯依据及恰当视图供人阅读和评审的场景。
+description: Create, complete, or update software design documents from business requirements, existing project designs, and code, following the applicable template. Use for high-level designs, detailed designs, technical proposals, and change designs that need concise writing, traceable evidence, and appropriate diagrams for review.
 ---
 
-# 软件设计文档
+# Software Design Documents
 
-让评审者快速看清：要解决什么、现状是什么、准备改什么、为什么这样改，以及如何验收。以项目事实为基础，用最少的必要文字和视图表达设计；不因编写设计而顺带实现代码。
+Help reviewers quickly understand the problem, current state, proposed changes, rationale, and acceptance criteria. Ground the design in project facts and use only the text and diagrams needed to explain it. Writing a design does not authorize implementing the code.
 
-## 1. 确定范围与模板
+Use the user's explicitly requested output language; otherwise, follow the language of their request or established conversation. English skill instructions and default prompts do not set the output language. Apply the chosen language to responses, document prose, and generated headings, table labels, and diagram labels. Preserve project terminology, code identifiers, paths, literal user-provided text, and headings that a specified template requires unchanged.
 
-- 从用户诉求提取业务目标、使用角色、关键场景、约束和本次边界。沿用用户语言与项目术语，未指定时用中文。
-- 先读适用的仓库约定（如 `AGENTS.md`、`CLAUDE.md`）和相关文档目录。优先使用用户指定的模板，其次是项目中适用的模板或同类设计结构；均无时使用 [内置精简模板](assets/design-template.md)。不要把内置目录叠加到已有模板后面。
-- 遵守指定模板的章节顺序、编号、必填内容和图表要求。必填但不适用的章节用一句话说明原因；可选空章节删除。模板只规定表达形式，示例内容不是项目事实。
-- 用户指定的模板不可读或缺失时说明缺口并索取可访问内容；可以继续梳理现状，但不要宣称已按该模板完成。多个模板无法判断适用性且会影响交付时再询问。
-- 明确是描述现有实现、设计新能力，还是更新已有文档。优先采用用户指定的输出位置和格式，其次沿用项目习惯；均无时写入 `docs/design/<主题>.md`，图源随文保存。更新文档时保留仍有效的内容与评审批注。
+## 1. Establish scope and choose a template
 
-## 2. 建立足够的项目依据
+- Extract business goals, user roles, key scenarios, constraints, and the scope of this task from the request.
+- Read applicable repository conventions, such as `AGENTS.md` and `CLAUDE.md`, and relevant documentation directories first. Prefer the user's specified template, then an applicable project template or comparable design structure. If neither exists, use the [built-in concise template](assets/design-template.md). Do not append the built-in structure to an existing template.
+- Follow the specified template's section order, numbering, required content, and diagram requirements. Explain in one sentence why a required section does not apply; remove optional empty sections. A template defines presentation, and its examples are not project facts.
+- If the specified template is missing or unreadable, explain the gap and request accessible content. Continue examining the current state where possible, but do not claim to have followed that template. Ask about competing templates only when the choice is unclear and would affect delivery.
+- Establish whether the task describes an existing implementation, designs a new capability, or updates an existing document. Prefer the user's output location and format, then project conventions; otherwise use `docs/design/<topic>.md` and keep diagram sources with the document. Preserve valid content and review comments when updating documents.
 
-先定位，再精读。用 `rg --files`、`rg` 或宿主的等价搜索工具找需求、设计、ADR、接口契约、数据模型与相关实现；跳过构建产物和第三方依赖，不倾倒整个仓库。
+## 2. Gather sufficient project evidence
 
-沿本次业务路径检查入口、业务逻辑、存储、外部调用和相关测试，确认已有能力、约束与改动落点。仅为解释关键设计而继续展开调用链；不要把代码目录清单当作设计。
+Locate relevant material before reading it closely. Use `rg --files`, `rg`, or equivalent host search tools to find requirements, designs, ADRs, API contracts, data models, and related implementations. Skip build artifacts and third-party dependencies; do not dump the entire repository.
 
-严格区分三类信息：
+Trace the relevant business path through entry points, business logic, storage, external calls, and tests to identify existing capabilities, constraints, and change locations. Follow additional calls only when they help explain a key design decision. A directory listing is not a design.
 
-| 类别 | 写法与依据 |
+Keep these categories distinct:
+
+| Category | Presentation and evidence |
 | --- | --- |
-| 现状事实 | 由已读取的实现、契约、配置或文档支撑；关键结论附相对路径及符号名，必要时加行号。配置默认值不等于线上配置，测试用例不等于测试已通过。 |
-| 拟议设计 | 明确写“拟新增／拟调整”，说明对应诉求、变化和影响；新接口、类、表、状态不得冒充已有实现。 |
-| 假设／待确认 | 标明缺什么证据、影响哪个决策以及如何确认；不编造容量、延迟、成本、工期或业务规则。 |
+| Current facts | Support claims with implementations, contracts, configuration, or documents actually read. Cite relative paths and symbols for key conclusions, adding line numbers when useful. Configuration defaults do not establish production settings, and test cases do not prove tests passed. |
+| Proposed design | Explicitly label proposed additions or changes and explain the requirement, change, and impact. Do not present new interfaces, classes, tables, or states as existing implementations. |
+| Assumptions and open questions | Identify missing evidence, the decision it affects, and how to confirm it. Do not invent capacity, latency, cost, timelines, or business rules. |
 
-- 存量设计与代码冲突时，分别说明原设计意图和当前检出的实现；以代码说明该版本行为，不据此自动否定业务要求，也不推定已部署。关键冲突放入待确认项。
-- 记录文档依据的版本或工作区状态（能取得且有意义时），有未提交变更时不要把整个快照等同于某个提交。引用路径必须真实存在；尚未创建的路径注明“拟新增”。
-- 缺失信息足以改变业务边界、接口兼容性或核心方案时，集中提出少量关键问题；仍可完成不依赖答案的部分并标记草案。其余缺口显式列出，不为小细节反复打断。
+- When existing designs conflict with code, describe both the original design intent and the checked-out implementation. Use code to explain that version's behavior without automatically dismissing business requirements or assuming deployment. Record material conflicts as open questions.
+- Record the source version or working tree state when available and meaningful. With uncommitted changes, do not equate the entire snapshot with a single commit. Referenced paths must exist; label paths that do not yet exist as proposed additions.
+- When missing information could change business scope, interface compatibility, or the core approach, group a few essential questions together. Complete independent portions and mark them as drafts. List smaller gaps explicitly without repeatedly interrupting for minor details.
 
-## 3. 写出可评审的设计
+## 3. Write a design that can be reviewed
 
-先在选定模板中安排“业务诉求 → 设计决策 → 变更落点 → 验收方式”，再补充必要细节。小改动用短段落完成对应关系；跨模块或多条需求时用精简映射表，避免重复建账。
+Within the chosen template, connect business requirements to design decisions, change locations, and acceptance criteria before adding detail. Use short paragraphs for small changes and a compact mapping table for work spanning modules or multiple requirements. Avoid maintaining duplicate mappings.
 
-- **结论在前。** 开头交代目标、范围和推荐方案。描述变化与理由，减少背景复述、术语科普和“高可用、易扩展”等无依据形容词。
-- **细节随风险。** 按需说明模块职责、接口输入输出与错误、数据约束和兼容策略。并发、幂等、事务、超时重试、补偿、权限、可观测性等只写与本次方案相关的机制和失败行为，不机械展开清单。
-- **选择可解释。** 有真实取舍时简述候选方案、推荐理由与代价；简单问题不制造多个备选架构。优先复用现有能力，新增组件需解释必要性。
-- **验收可观察。** 用具体场景和预期结果说明成功、关键异常与边界。涉及持久化或对外行为变更时，交代必要的迁移、兼容、发布和回退限制。
-- **保持短而完整。** 一段回答一个问题；表格用于可对照的信息；代码片段仅用于无法用文字说清的契约或关键算法。省略整份源码、getter/setter、无关字段及逐文件介绍。
-- **事实可追溯。** 在结论附近引用关键依据，或用一张紧凑来源表集中关联。不得写“已验证／已测试／已评审”而没有相应执行记录。
+- **Lead with conclusions.** State the goal, scope, and recommended approach first. Explain changes and reasons; avoid repeating background, teaching unrelated terminology, or claiming qualities such as high availability or extensibility without evidence.
+- **Scale detail to risk.** Cover module responsibilities, interface inputs, outputs and errors, data constraints, and compatibility as needed. Discuss concurrency, idempotency, transactions, timeouts, retries, compensation, permissions, and observability only where their mechanisms or failure behavior matter to this design.
+- **Explain real choices.** When tradeoffs exist, briefly describe alternatives, the recommendation, and its costs. Do not manufacture competing architectures for simple problems. Prefer existing capabilities and explain why any new component is necessary.
+- **Make acceptance observable.** Use concrete scenarios and expected results for success, important failures, and boundaries. For persistence or externally visible behavior changes, cover necessary migration, compatibility, release, and rollback constraints.
+- **Stay concise and complete.** Let each paragraph answer one question. Use tables for comparable information and code snippets only for contracts or key algorithms that prose cannot explain clearly. Omit full source listings, getters and setters, unrelated fields, and file-by-file walkthroughs.
+- **Keep facts traceable.** Cite key evidence near conclusions or connect it in a compact source table. Do not claim validation, testing, or review without corresponding execution records.
 
-## 4. 用视图降低理解成本
+## 4. Use diagrams to clarify the design
 
-先问这张图帮助评审者判断什么，再选择图种。绘图时读 [视图选择与示例](references/views.md)，按业务特点选择用例图、类图、时序图、流程图、状态图，以及需要的架构、ER 或部署视图；不要求每篇齐备，也不设固定张数。模板明确要求的图应满足，确实不适用时说明原因。
+Choose each diagram by the decision it helps a reviewer make. When drawing, read [diagram selection and examples](references/views.md). Select use case, class, sequence, flow, state, architecture, ER, or deployment diagrams as the business problem requires; there is no required set or fixed count. Include diagrams explicitly required by the template, or explain why they do not apply.
 
-- 视图紧邻对应设计，标题说明业务问题与“现状／拟议”。图中命名、方向、基数、调用顺序、条件及状态必须与正文和证据一致。
-- 一图聚焦一个问题。关系拥挤时按场景或层次拆分；不要在同一图混用业务角色、类与部署实例，除非边界和层次已明确。
-- 沿用项目支持的图源格式；未约定时优先 Mermaid，严格 UML 用例等场景按渲染器能力选择 PlantUML。保留可编辑图源，避免使用目标渲染器不支持的语法。
-- 用图表达关系和变化，用文字补充决策理由、规则和边界，避免逐箭头复述。流程、交互或生命周期涉及拒绝、失败、重试等关键路径时，在合适的视图中表达。
+- Place each diagram beside the relevant design and title it with the business question and whether it shows the current or proposed state. Names, directions, cardinalities, call order, conditions, and states must agree with the text and evidence.
+- Keep each diagram focused on one question. Split crowded relationships by scenario or level. Do not mix business actors, classes, and deployment instances unless their boundaries and levels are clear.
+- Use diagram source formats supported by the project. Without an existing convention, prefer Mermaid; choose PlantUML for strict UML use cases or similar needs when the renderer supports it. Keep editable sources and avoid unsupported syntax.
+- Use diagrams for relationships and changes, and prose for rationale, rules, and boundaries. Do not repeat every arrow in prose. Show important rejection, failure, retry, and other paths in an appropriate diagram when they affect a workflow, interaction, or lifecycle.
 
-## 5. 交付前自检
+## 5. Check before delivery
 
-1. **模板与覆盖：** 必填项齐全，诉求能对应到方案和验收；无关章节、模板提示、空表及占位符已清理，未决问题有明确说明。
-2. **准确与一致：** 核对关键源文件、引用、契约、术语和图文；事实、提议和假设没有混写，未把旧文档或测试意图当作运行事实。
-3. **视图可读：** 使用项目已有工具检查图源；能渲染时实际预览，检查截断、重叠及条件可辨性。无工具时做语法和语义检查，并在交付说明中如实标注未渲染验证，不宣称已通过。
-4. **篇幅与变更：** 删去不影响理解或评审决策的句子，检查差异，避免覆盖用户已有修改。文档任务无需启动服务或修改业务代码。
+1. **Template and coverage:** Required content is complete, and requirements connect to the design and acceptance criteria. Remove irrelevant sections, template guidance, empty tables, and placeholders. Clearly describe unresolved questions.
+2. **Accuracy and consistency:** Check key source files, references, contracts, terminology, and agreement between diagrams and prose. Keep facts, proposals, and assumptions distinct; do not treat old documents or test intent as runtime facts.
+3. **Diagram readability:** Use existing project tools to check diagram sources. Render and inspect them when possible, checking clipping, overlap, and readable conditions. Without a renderer, review syntax and semantics, explicitly report that rendering was not verified, and do not claim it passed.
+4. **Length and changes:** Remove sentences that do not help understanding or review decisions. Check the diff and preserve the user's existing edits. A documentation task does not require starting services or changing business code.
 
-完成后简短给出文档路径、主要设计结论及影响评审的待确认项；不要在聊天里再次复制整篇文档。
+Finish with a brief response giving the document path, key design conclusions, and open questions that affect review. Do not repeat the entire document in chat.

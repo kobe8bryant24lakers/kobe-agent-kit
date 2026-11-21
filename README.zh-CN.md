@@ -4,6 +4,8 @@
 
 个人工具集，包含可复用的智能体技能、MCP 服务器和插件。
 
+技能、插件和 MCP 服务器的指令、默认提示词和配套模板统一使用英文编写。回复和生成内容优先使用用户指定的语言；未指定时跟随用户请求或对话的语言。原样文本、代码标识符和模板要求保留的标题保持不变。创建或更新组件时遵循[项目约定](AGENTS.md)。
+
 ## 软件设计文档
 
 [`software-design`](.agents/skills/software-design/SKILL.md) 根据业务诉求、项目中的存量设计和代码编写或更新可评审的设计文档。优先遵循指定或项目模板，没有模板时采用[内置精简模板](.agents/skills/software-design/assets/design-template.md)。区分现状、拟议设计和待确认项，按需添加用例图、类图、时序图、流程图、状态图等[视图](.agents/skills/software-design/references/views.md)，避免堆砌文字和图表。
