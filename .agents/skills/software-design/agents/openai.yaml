@@ -1,4 +1,4 @@
 interface:
-  display_name: "软件设计文档"
-  short_description: "结合业务诉求、存量设计与代码，按模板生成简洁准确、配图适度的软件设计文档"
-  default_prompt: "用 $software-design 按项目模板，结合业务诉求、存量设计和相关代码，编写简洁、准确、便于评审的软件设计文档，并按需添加视图。"
+  display_name: "Software Design Documents"
+  short_description: "Draft concise designs grounded in requirements and code"
+  default_prompt: "Use $software-design to write a concise software design document in my language, following the project template and grounding it in requirements, existing designs, and code, with diagrams as needed."

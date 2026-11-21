@@ -4,6 +4,8 @@ English | [简体中文](README.zh-CN.md)
 
 A personal toolkit of reusable agent skills, MCP servers, and plugins.
 
+Instructions, default prompts, and supporting templates for skills, plugins, and MCP servers are written in English. Responses and generated content follow the user's requested language, or the language of their request or conversation when none is specified. Literal text, code identifiers, and required template headings are preserved. See [project conventions](AGENTS.md) when creating or updating components.
+
 ## Software design documents
 
 [`software-design`](.agents/skills/software-design/SKILL.md) creates or updates design documents for review based on business requirements, existing project designs, and code. It follows a specified template or the project's template, falling back to the [built-in concise template](.agents/skills/software-design/assets/design-template.md) when neither is available. It distinguishes the current state, proposed design, and open questions, adding [diagrams](.agents/skills/software-design/references/views.md) such as use case, class, sequence, flow, and state diagrams as needed while keeping text and visuals focused.
